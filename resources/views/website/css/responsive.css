@@ -1,0 +1,806 @@
+@media only screen and (max-width: 1600px) {}
+
+@media only screen and (max-width: 1445px) {
+	html {
+		font-size: 15px;
+	}
+
+	header {
+		padding-top: .5rem;
+	}
+
+	.navbar-brand img {
+		width: 180px;
+	}
+
+	.navbar-nav .nav-item .nav-link {
+		padding: 1.5rem 0 0;
+		margin: 0 1.25rem;
+	}
+
+	.form-inline ul li a {
+		width: 43px;
+		height: 43px;
+	}
+
+	.slideContent h3 {
+		font-size: 1.5rem;
+	}
+
+	.slideContent h2 {
+		font-size: 5rem;
+	}
+
+	.themeBtn {
+		padding: 0.7em 2em;
+	}
+
+	.main-slider .badgeHeading {
+		top: 50%;
+		left: 50%;
+		font-size: 13rem;
+		transform: translate(-50%, -50%);
+	}
+
+	.gunRange {
+		margin-left: 0;
+	}
+
+	.aboutSec {
+		padding: 6% 0;
+	}
+
+	.aboutSec .gun1 {
+		right: 0;
+		top: 0;
+	}
+
+	.handle-3d {
+		height: 150px;
+		right: -5rem;
+	}
+
+	.magzinepart-3d {
+		height: 150px;
+		left: -5rem;
+	}
+
+	.sectionHeading {
+		font-size: 3.5rem;
+		margin: 0 0 12px;
+	}
+
+	.ServiceSec .sectionHeading {
+		margin-bottom: 5rem;
+	}
+
+	.boxService {
+		padding: 1.75em;
+	}
+
+	.boxService h6 {
+		height: 40px;
+	}
+
+	.boxService h6:before {
+		left: 50%;
+		transform: translateX(-50%);
+		bottom: -16px;
+	}
+
+	.boxService h5 {}
+
+	.ourProducts {
+		padding: 80px 0 100px;
+		position: relative;
+	}
+
+	.part1-3d {
+		height: 200px;
+		top: 0;
+		right: -2rem;
+	}
+
+	.trigger-3d {
+		height: 200px;
+		top: 0;
+		left: -2rem;
+	}
+
+	.BatchPart-3d {
+		height: 200px;
+		top: 50%;
+		right: -4rem;
+	}
+
+	.part2-3d {
+		height: 200px;
+		bottom: 0;
+		left: -2rem;
+	}
+
+	.BatchShoulder-3d {
+		height: 200px;
+		bottom: 0;
+		right: -2rem;
+	}
+
+	.Bullet-3d,
+	.Cylender-3d {
+		height: 200px;
+		top: 0;
+	}
+
+	.Bullet-3d {
+		left: -5rem;
+	}
+
+	.Cylender-3d {
+		right: -5rem;
+	}
+
+	.PackageSec .sectionHeading {
+		padding-bottom: 5rem;
+	}
+
+	.rifleImg .overlay h2 {
+		font-size: 2.75rem;
+	}
+
+	.rifleImg .overlay {
+		bottom: 40px;
+		left: 40px;
+	}
+
+	.becomeDealer .gun5 {
+		top: 0;
+		width: 250px;
+	}
+
+	.becomeDealer {
+		padding: 5rem 0;
+	}
+
+	.becomeDealer .viewBtn {
+		padding-bottom: 6.25rem;
+	}
+
+	.newsLetter form {
+		margin: 0;
+		z-index: 1;
+	}
+
+	.newsLetter .gun6,
+	.newsLetter .gun7 {
+		width: 300px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.newsLetter .gun6 {
+		left: 1.25rem;
+	}
+
+	.newsLetter .gun7 {
+		right: 1.25rem;
+	}
+
+	.abtPage {
+		padding: 5rem 0;
+	}
+
+	.shopPage,
+	.cntctPage,
+	.cntctForms,
+	.productDetail {
+		padding: 5rem 0;
+	}
+
+	.requstForm {
+		margin: 0;
+	}
+
+	.cntctForms a {
+		padding: 1.25em 0;
+		margin-bottom: 2.25rem;
+	}
+
+	.formStyle .form-control {
+		height: 44px;
+		margin-bottom: 1.125rem;
+	}
+
+	.rifleImg img {
+		height: 852px;
+	}
+
+	.rifleImgone img {
+		height: 450px;
+	}
+
+	.rifleImgtwo img {
+		height: 400px;
+	}
+}
+
+@media only screen and (max-width: 1366px) {
+	html {
+		font-size: 14px;
+	}
+
+	.container {
+		max-width: 1140px;
+	}
+
+	.navbar-brand img {
+		width: 140px;
+	}
+
+	.navbar-nav .nav-item .nav-link {
+		margin: 0 1rem;
+	}
+
+	.form-inline ul li a {
+		width: 40px;
+		height: 40px;
+	}
+
+	.main-slider {
+		padding: 5% 0 0;
+	}
+
+	.slideContent p {
+		margin: 0 0 1rem;
+	}
+
+	.main-slider .badgeHeading {
+		font-size: 12rem;
+	}
+
+	.abtContent h3 {
+		font-size: 1.5rem;
+	}
+
+	.abtContent h2 {
+		font-size: 2.25rem;
+	}
+
+	.aboutSec .gun1 {
+		top: 2rem;
+		width: 250px;
+	}
+
+	.aboutSec .gun2 {
+		bottom: -6rem;
+		width: 300px;
+	}
+
+	.ServiceSec {
+		padding: 8rem 0 4rem;
+	}
+
+	.handle-3d,
+	.magzinepart-3d {
+		height: 130px;
+	}
+
+	.newsLetter form input {
+		height: 80px;
+	}
+
+	.newsLetter .gun6,
+	.newsLetter .gun7 {
+		width: 200px;
+	}
+
+	.requstForm input {
+		height: 60px;
+	}
+
+	.chsoeFile .chosEt {
+		top: 16px;
+	}
+
+	.abtimg img {
+		width: 400px;
+	}
+
+	.abtimg figure img {
+		width: 200px;
+		height: 140px;
+	}
+}
+
+@media (max-width: 1199.98px) {
+	html {
+		font-size: 13px;
+	}
+
+	.container {
+		max-width: 960px;
+	}
+
+	.sectionHeading {
+		font-size: 3.125rem;
+	}
+
+	.boxService h6 {
+		height: 30px;
+	}
+
+	.boxService h6:before {
+		bottom: -18px;
+	}
+
+	.boxService h5 {
+		font-size: 1.25rem;
+	}
+
+	.boxService p {
+		margin: 1.125rem 0 0;
+	}
+
+	.Bullet-3d,
+	.Cylender-3d {
+		height: 150px;
+	}
+
+	.PackageSec .sectionHeading {
+		padding-bottom: 4rem;
+	}
+
+	.rifleImg .overlay h2 {
+		font-size: 2.5rem;
+	}
+
+	.becomeDealer .gun5 {
+		top: 0;
+		width: 200px;
+	}
+
+	.becomeDealer {
+		padding: 4rem 0;
+	}
+
+	.becomeDealer .viewBtn {
+		padding-bottom: 5.25rem;
+	}
+
+	.newsLetter form input {
+		height: 72px;
+		padding: 0 200px 0 40px;
+	}
+
+	.abtPage {
+		padding: 4rem 0;
+	}
+
+	.shopPage,
+	.cntctPage,
+	.cntctForms,
+	.productDetail {
+		padding: 4rem 0;
+	}
+
+	.rifleImg img {
+		height: 752px;
+	}
+
+	.rifleImgone img {
+		height: 400px;
+	}
+
+	.rifleImgtwo img {
+		height: 350px;
+	}
+}
+
+@media (max-width: 991.98px) {
+	html {
+		font-size: 12px;
+	}
+
+	.container {
+		max-width: 720px;
+	}
+
+	.navbar-collapse {
+		background: var(--black-color);
+		padding: 1em;
+		border-radius: 10px;
+	}
+
+	.navbar-nav {
+		margin: 0 0 1rem;
+		gap: 1rem;
+	}
+
+	.navbar-nav .nav-item .nav-link {
+		color: var(--heading-color);
+		margin: 0;
+		padding: 0 0 1rem;
+		border-width: 0 0 2px !important;
+		border-color: var(--primary);
+		border-style: solid;
+	}
+
+	.form-inline ul {
+		justify-content: space-between;
+		flex-flow: wrap row;
+		width: 100%;
+	}
+
+	.main-slider {
+		padding: 10% 0 0;
+	}
+
+	.slideContent h2 {
+		font-size: 4.5rem;
+	}
+
+	.main-slider .badgeHeading {
+		font-size: 10rem;
+	}
+
+	.gunRange img {
+		width: 200px;
+	}
+
+	.servicebox {
+		margin-bottom: 2.25rem;
+	}
+
+	.magzinepart-3d {
+		left: -7rem;
+	}
+
+	.handle-3d {
+		right: -7rem;
+	}
+
+	.trigger-3d,
+	.BatchShoulder-3d,
+	.BatchPart-3d,
+	.part1-3d,
+	.part2-3d {
+		height: 150px;
+	}
+
+	.trigger-3d {
+		left: -5rem;
+	}
+
+	.part1-3d {
+		right: -5rem;
+	}
+
+	.BatchPart-3d {
+		right: -8rem;
+	}
+
+	.part2-3d {
+		left: -5rem;
+	}
+
+	.BatchShoulder-3d {
+		right: -5rem;
+	}
+
+	.packageBox {
+		margin-bottom: 2.25rem;
+	}
+
+	.requstForm input {
+		height: 50px;
+	}
+
+	.chsoeFile .chosEt {
+		top: 14px;
+		left: 20px;
+	}
+
+	.aboutSec .gun1,
+	.aboutSec .gun2 {
+		width: 200px;
+	}
+
+	.abtimg img {
+		width: 100%;
+	}
+
+	.abtimg figure img {
+		display: none;
+	}
+}
+
+@media (max-width: 767.98px) {
+	html {
+		font-size: 11px;
+	}
+
+	.container {
+		max-width: 540px;
+	}
+
+	.buletsOne {
+		display: none;
+	}
+
+	.slideContent {
+		margin-top: 6rem;
+	}
+
+	.gunRghtimg {
+		user-select: none;
+		pointer-events: none;
+	}
+
+	.slideContent p {
+		font-size: 1.25rem;
+	}
+
+	.topSet {
+		padding: 0 0 1rem;
+	}
+
+	.gunRange .gunContent {
+		padding: 1.25rem;
+		width: 100%;
+		height: auto;
+		margin-left: -4%;
+	}
+
+	.stateList {
+		justify-content: flex-start;
+		margin-top: 2rem;
+	}
+
+	.stateList span select {
+		display: none;
+	}
+
+	.stateList span ul li a {
+		color: var(--black-color);
+		font-size: 1.5rem;
+	}
+
+	.abtContent {
+		margin-top: 2rem;
+	}
+
+	.abtContent p,
+	.abtContent ul li {
+		font-size: 1.125rem;
+		margin: 0 0 1rem;
+	}
+
+	.aboutSec .gun1 {
+		width: 180px;
+	}
+
+	.aboutSec .gun2 {
+		width: 200px;
+	}
+
+	.ServiceSec {
+		padding: 6rem 0 4rem;
+	}
+
+	.sectionHeading {
+		font-size: 3rem;
+	}
+
+	.boxService {
+		padding: 1.5em;
+	}
+
+	.boxService h6 {
+		height: 30px;
+		font-size: 1.75rem;
+	}
+
+	.trigger-3d,
+	.BatchShoulder-3d,
+	.BatchPart-3d,
+	.part1-3d,
+	.part2-3d {
+		height: 100px;
+	}
+
+	.becomeDealer .gun5 {
+		width: 150px;
+	}
+
+	.becomeDealer {
+		padding: 3rem 0;
+	}
+
+	.rifleImg .overlay h2 {
+		font-size: 2.375rem;
+	}
+
+	.newsLetter form .themeBtn {
+		padding: 1em 2.75em;
+	}
+
+	.newsLetter form input {
+		height: 58px;
+		padding: 0 180px 0 20px;
+	}
+
+	.newsLetter .gun6,
+	.newsLetter .gun7 {
+		width: 150px;
+	}
+
+	.newsLetter .gun6 {
+		left: 0;
+	}
+
+	.newsLetter .gun7 {
+		right: 0;
+	}
+
+	footer .col-md-4 {
+		border-right: none;
+		padding-block: 3rem;
+		border-bottom: 1px solid #828282;
+	}
+
+	.copyRight p {
+		border: none;
+		padding: 1rem 0;
+	}
+
+	footer .col-md-4:last-child {
+		padding-left: 15px;
+	}
+
+	.ftrList h3 {
+		margin: 0 0 2rem;
+	}
+
+	.newsLetter {
+		padding: 4rem 0;
+	}
+
+	.abtPage {
+		padding: 3rem 0;
+	}
+
+	.shopPage,
+	.cntctPage,
+	.cntctForms,
+	.productDetail {
+		padding: 3rem 0;
+	}
+
+	.shpList {
+		margin-bottom: 2.25rem;
+	}
+
+	.requstForm input {
+		height: 44px;
+		margin: 0 0 2rem;
+	}
+
+	.chsoeFile .chosEt {
+		top: 12px;
+	}
+
+	.accounTab .custom-control {
+		margin: 1.25rem 0 .5rem;
+	}
+
+	.detail {
+		margin-left: 0;
+	}
+
+	.rifleImg img {
+		height: 552px;
+	}
+
+	.rifleImgone img {
+		height: 300px;
+	}
+
+	.rifleImgtwo img {
+		height: 250px;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.navbar-brand img {
+		width: 120px;
+	}
+
+	.slideContent {
+		margin-top: 10rem;
+	}
+
+	.slideContent h2 {
+		font-size: 4rem;
+	}
+
+	.gunRghtimg {
+		margin-right: 0;
+	}
+
+	.main-slider .badgeHeading {
+		font-size: 7rem;
+	}
+
+	.gunRange img {
+		display: none;
+	}
+
+	.gunRange .gunContent {
+		margin-left: 0;
+	}
+
+	.aboutSec .gun1 {
+		width: 140px;
+	}
+
+	.aboutSec .gun2 {
+		display: none;
+	}
+
+	.Bullet-3d {
+		display: none;
+	}
+
+	.PackageSec {
+		padding: 5rem 0;
+	}
+
+	.becomeDealer .gun5 {
+		display: none;
+	}
+
+	.becomeDealer .viewBtn {
+		padding-bottom: 4.25rem;
+	}
+
+	.dealrImg {
+		margin-bottom: 2.25rem;
+	}
+
+	.newsLetter .gun6,
+	.newsLetter .gun7 {
+		display: none;
+	}
+
+	.newsLetter h2 {
+		font-size: 2.5rem;
+	}
+
+	.formStyle .form-control {
+		height: 40px;
+		margin-bottom: 1rem;
+	}
+
+	.orderTab .alert {
+		flex-flow: wrap column;
+	}
+
+	.myAccount .adressCard {
+		min-width: 100%;
+	}
+
+	.rifleImg img,
+	.rifleImgone img,
+	.rifleImgtwo img {
+		height: auto;
+		aspect-ratio: 3 / 2;
+	}
+
+	.rifleImgone,
+	.rifleImgtwo {
+		border-left: none;
+		border-bottom: none;
+		border-top: 2px solid #fff;
+	}
+}
+
+@media (max-width: 320.98px) {}

@@ -1,0 +1,23 @@
+{
+  "name": "Guns & Wildlife",
+  "short_name": "GunsWildlife",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4c5324",
+  "orientation": "portrait",
+  "description": "Guns & Wildlife is Pakistan's trusted platform for licensed firearms, tactical gear, and shooting services.",
+  "lang": "en-PK",
+  "icons": [
+    {
+      "src": "/images/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
