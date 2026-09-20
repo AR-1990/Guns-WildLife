@@ -126,6 +126,7 @@ class AdminDashboardController extends Controller
         $recentSales = $sales->take(8)->values();
         $topProducts = $this->topProducts($monthlySales, true);
         $contactsCount = ContactRequest::query()->count();
+        $stockSummary = $this->stockSummary();
 
         $monthlyAdminProfit = $monthlySales->sum(fn (Sale $sale) => $sale->items->sum(fn ($item) => $this->adminProfitForItem($item)));
 
@@ -144,6 +145,10 @@ class AdminDashboardController extends Controller
                 'contacts' => $contactsCount,
                 'today_sales_count' => $todaySales->count(),
                 'today_sales_total' => (float) $todaySales->sum('grand_total'),
+                'remaining_stock' => $stockSummary['remaining_stock'],
+                'remaining_stock_value' => $stockSummary['remaining_stock_value'],
+                'received_stock' => $stockSummary['received_stock'],
+                'received_stock_value' => $stockSummary['received_stock_value'],
             ],
             'quickStats' => [
                 [
@@ -228,5 +233,24 @@ class AdminDashboardController extends Controller
     private function adminProfitForItem(SaleItem $item): float
     {
         return (((float) $item->price) - (float) ($item->historical_cost ?? 0)) * (int) $item->quantity;
+    }
+
+    private function stockSummary(): array
+    {
+        $summary = Product::query()
+            ->join('product_restock_entries', 'product_restock_entries.product_id', '=', 'products.id')
+            ->where('products.status', 'active')
+            ->selectRaw('COALESCE(SUM(product_restock_entries.remaining_quantity), 0) as remaining_stock')
+            ->selectRaw('COALESCE(SUM(product_restock_entries.remaining_quantity * product_restock_entries.unit_purchase_price), 0) as remaining_stock_value')
+            ->selectRaw('COALESCE(SUM(product_restock_entries.quantity), 0) as received_stock')
+            ->selectRaw('COALESCE(SUM(product_restock_entries.quantity * product_restock_entries.unit_purchase_price), 0) as received_stock_value')
+            ->first();
+
+        return [
+            'remaining_stock' => (int) ($summary->remaining_stock ?? 0),
+            'remaining_stock_value' => round((float) ($summary->remaining_stock_value ?? 0), 2),
+            'received_stock' => (int) ($summary->received_stock ?? 0),
+            'received_stock_value' => round((float) ($summary->received_stock_value ?? 0), 2),
+        ];
     }
 }

@@ -122,6 +122,50 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-card__icon">
+                            <i class="fas fa-boxes-stacked"></i>
+                        </div>
+                        <div class="metric-card__content">
+                            <h3 class="metric-card__title">Remaining Stock</h3>
+                            <p class="metric-card__value">{{ $summary['remaining_stock'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-card__icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="metric-card__content">
+                            <h3 class="metric-card__title">Remaining Stock Price</h3>
+                            <p class="metric-card__value">Rs. {{ number_format((float) $summary['remaining_stock_value'], 2) }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-card__icon">
+                            <i class="fas fa-truck-ramp-box"></i>
+                        </div>
+                        <div class="metric-card__content">
+                            <h3 class="metric-card__title">Total Stock Received</h3>
+                            <p class="metric-card__value">{{ $summary['received_stock'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-card__icon">
+                            <i class="fas fa-sack-dollar"></i>
+                        </div>
+                        <div class="metric-card__content">
+                            <h3 class="metric-card__title">Received Stock Price</h3>
+                            <p class="metric-card__value">Rs. {{ number_format((float) $summary['received_stock_value'], 2) }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         @else
             <div class="row g-3">

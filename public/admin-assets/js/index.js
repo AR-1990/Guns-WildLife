@@ -1,61 +1,139 @@
 $(function () {
-	replaceHash()
-	// initSidebar()
-	if ($("#stockPerformanceChart").length > 0) {
-		stockPerformanceChart()
-	}
-	if ($("#stockOverviewChart").length > 0) {
-		stockOverviewChart()
-	}
-	if ($("#orderSummaryChart").length > 0) {
-		orderSummaryChart()
-	}
-	if ($("#salesTable").length > 0) {
-		initSalesTable()
-	}
-	if ($("#productsTable").length > 0) {
-		initProductsTable()
-	}
-	if ($("#categoryTable").length > 0) {
-		initCategoryTable()
-	}
-	if ($("#subCategoryTable").length > 0) {
-		initSubCategoryTable()
-	}
-	if ($("#financialTable").length > 0) {
-		initFinancialTable()
-	}
-	if ($("#cashbookTable").length > 0) {
-		initCashbookTable()
-	}
-	if ($("#expenseTable").length > 0) {
-		initExpenseTable()
-	}
-	if ($("#payrollTable").length > 0) {
-		initPayrollTable()
-	}
-	if ($("#loansTable").length > 0) {
-		initLoansTable()
-	}
-	if ($("#taxesTable").length > 0) {
-		initTaxesTable()
-	}
-	if ($("#measurementUnitTable").length > 0) {
-		initMeasurementUnitTable()
-	}
-	if ($("#wareHouseTable").length > 0) {
-		initWareHouseTable()
-	}
-	if ($("#discountTable").length > 0) {
-		initDiscountTable()
-	}
-	if ($("#customerTable").length > 0) {
-		initCustomerTable()
-	}
+	try { replaceHash(); } catch (e) { try { console.warn('replaceHash failed.', e); } catch (ignore) {} }
+	try { initPersistentSidebar(); } catch (e) { try { console.warn('initPersistentSidebar failed.', e); } catch (ignore) {} }
+	try {
+		if ($("#stockPerformanceChart").length > 0) {
+			stockPerformanceChart()
+		}
+	} catch (e) {}
+	try {
+		if ($("#stockOverviewChart").length > 0) {
+			stockOverviewChart()
+		}
+	} catch (e) {}
+	try {
+		if ($("#orderSummaryChart").length > 0) {
+			orderSummaryChart()
+		}
+	} catch (e) {}
+	try {
+		if ($("#salesTable").length > 0) {
+			initSalesTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#productsTable").length > 0) {
+			initProductsTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#categoryTable").length > 0) {
+			initCategoryTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#subCategoryTable").length > 0) {
+			initSubCategoryTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#financialTable").length > 0) {
+			initFinancialTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#cashbookTable").length > 0) {
+			initCashbookTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#expenseTable").length > 0) {
+			initExpenseTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#payrollTable").length > 0) {
+			initPayrollTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#loansTable").length > 0) {
+			initLoansTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#taxesTable").length > 0) {
+			initTaxesTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#measurementUnitTable").length > 0) {
+			initMeasurementUnitTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#wareHouseTable").length > 0) {
+			initWareHouseTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#discountTable").length > 0) {
+			initDiscountTable()
+		}
+	} catch (e) {}
+	try {
+		if ($("#customerTable").length > 0) {
+			initCustomerTable()
+		}
+	} catch (e) {}
 })
 
 function shouldSkipDataTable(selector) {
 	return $(selector).is('[data-laravel-pagination="true"]');
+}
+
+function initPersistentSidebar() {
+        const storageKey = 'admin-sidebar-collapsed';
+        const root = document.documentElement;
+        const toggleButton = document.getElementById('dashboardSidebarCollapse');
+
+        if (!toggleButton) {
+                return;
+        }
+
+        if (toggleButton.getAttribute('data-sidebar-toggle-bound') === '1') {
+                return;
+        }
+
+        const applySidebarState = (isCollapsed) => {
+                root.classList.toggle('sidebar-collapsed', isCollapsed);
+                toggleButton.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+                toggleButton.setAttribute('aria-label', isCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+                toggleButton.setAttribute('title', isCollapsed ? 'Expand sidebar' : 'Collapse sidebar');
+        };
+
+        applySidebarState(root.classList.contains('sidebar-collapsed'));
+
+        toggleButton.addEventListener('click', function () {
+                const isCollapsed = !root.classList.contains('sidebar-collapsed');
+                applySidebarState(isCollapsed);
+
+                try {
+                        window.localStorage.setItem(storageKey, isCollapsed ? '1' : '0');
+                } catch (error) {
+                        console.warn('Sidebar preference could not be saved.', error);
+                }
+        });
+
+        toggleButton.setAttribute('data-sidebar-toggle-bound', '1');
+
+        $(document).on('click', '.dashboard-sidebar__toggle', function (event) {
+                if (!root.classList.contains('sidebar-collapsed')) {
+                        return;
+                }
+
+                event.preventDefault();
+        });
 }
 
 // Initialize Sidebar
@@ -270,14 +348,18 @@ function shouldSkipDataTable(selector) {
 // }
 
 function replaceHash() {
-	document.querySelectorAll("a").forEach((a) => {
-		let href = a.getAttribute("href");
-		a.href = href ?
-			href.startsWith("#") && href.endsWith("#") ?
-			href.replace("#", "javascript:void(0)") :
-			href :
-			"javascript:void(0)";
-	});
+	try {
+		document.querySelectorAll("a").forEach((a) => {
+			let href = a.getAttribute("href");
+			if (typeof href !== "string") return;
+			if (href !== "#") return;
+			if (a.getAttribute("data-bs-toggle")) return;
+			if (a.getAttribute("data-bs-target")) return;
+			a.href = "javascript:void(0)";
+		});
+	} catch (e) {
+		try { console.warn('replaceHash inner failed.', e); } catch (ignore) {}
+	}
 }
 
 // Stock Performance Chart (Bar Chart)

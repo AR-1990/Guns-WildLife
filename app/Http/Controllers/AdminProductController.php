@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductRestockEntry;
 use App\Models\ProductUnit;
 use App\Support\ProductCostingService;
 use Illuminate\Support\Carbon;
@@ -149,8 +150,9 @@ class AdminProductController extends Controller
     {
         $data = $this->validateProduct($request, $product);
         $entryDate = Carbon::parse((string) ($data['entry_date'] ?? optional($product->created_at)->toDateString() ?: now()->toDateString()))->startOfDay();
+        $canEditOpeningInventory = $this->canEditOpeningInventory($product);
 
-        DB::transaction(function () use ($request, $product, $data, $entryDate) {
+        DB::transaction(function () use ($request, $product, $data, $entryDate, $canEditOpeningInventory) {
             $productPayload = $data;
             unset($productPayload['entry_date']);
 
@@ -159,6 +161,11 @@ class AdminProductController extends Controller
             }
 
             $product->update($productPayload);
+
+            if ($canEditOpeningInventory) {
+                $this->syncEditableOpeningInventory($request, $product);
+            }
+
             $this->syncProductEntryDate($product, $entryDate);
         });
 
@@ -332,11 +339,13 @@ class AdminProductController extends Controller
     private function productFormView(Product $product, string $title, string $pageHeading, ?Request $request = null): View
     {
         $product->loadMissing(['units']);
+        $canEditOpeningInventory = ! $product->exists || $this->canEditOpeningInventory($product);
 
         return view('admin.products.create.create-product', [
             'product' => $product,
             'title' => $title,
             'pageHeading' => $pageHeading,
+            'canEditOpeningInventory' => $canEditOpeningInventory,
             'categories' => Category::query()->where('is_active', true)->orderBy('name')->get(),
             'productUnits' => old('weapon_units', $product->units->map(fn (ProductUnit $unit) => [
                 'id' => $unit->id,
@@ -348,6 +357,8 @@ class AdminProductController extends Controller
 
     private function validateProduct(Request $request, ?Product $product = null): array
     {
+        $canEditOpeningInventory = ! $product || $this->canEditOpeningInventory($product);
+
         $request->merge([
             'product_code' => $product?->product_code ?: $this->nextProductCode(),
         ]);
@@ -416,10 +427,29 @@ class AdminProductController extends Controller
             ]);
         }
 
-        if ($product) {
+        if (($product && ! $canEditOpeningInventory) || $product) {
+            $data['is_serialized'] = (bool) $product->is_serialized;
+        }
+
+        if ($data['is_serialized']) {
+            $weaponNumbers = $this->weaponNumbersFromRequest($request);
+
+            if (count($weaponNumbers) !== (int) $data['stock_quantity']) {
+                throw ValidationException::withMessages([
+                    'stock_quantity' => 'Serialized product ke liye quantity aur weapon codes ka count same hona chahiye.',
+                ]);
+            }
+
+            if (count($weaponNumbers) !== count(array_unique($weaponNumbers))) {
+                throw ValidationException::withMessages([
+                    'weapon_units' => 'Same weapon code do dafa use nahi ho sakta.',
+                ]);
+            }
+        }
+
+        if ($product && ! $canEditOpeningInventory) {
             $data['purchase_price'] = (float) $product->purchase_price;
             $data['stock_quantity'] = (int) $product->stock_quantity;
-            $data['is_serialized'] = (bool) $product->is_serialized;
         }
 
         return $data;
@@ -476,6 +506,85 @@ class AdminProductController extends Controller
 
         $product->updateQuietly([
             'stock_quantity' => $product->units()->count(),
+        ]);
+    }
+
+    private function syncEditableOpeningInventory(Request $request, Product $product): void
+    {
+        $costingService = app(ProductCostingService::class);
+        $costingService->ensureLegacyTracked($product);
+
+        $openingEntry = $product->restockEntries()
+            ->where('is_opening', true)
+            ->orderBy('id')
+            ->first();
+
+        if (! $openingEntry) {
+            return;
+        }
+
+        if ($product->is_serialized) {
+            $this->syncEditableSerializedOpeningInventory($request, $product, $openingEntry);
+
+            return;
+        }
+
+        $openingEntry->updateQuietly([
+            'quantity' => (int) $product->stock_quantity,
+            'remaining_quantity' => (int) $product->stock_quantity,
+            'unit_purchase_price' => (float) $product->purchase_price,
+        ]);
+    }
+
+    private function syncEditableSerializedOpeningInventory(Request $request, Product $product, ProductRestockEntry $openingEntry): void
+    {
+        $units = collect($request->input('weapon_units', []))
+            ->map(function (array $unit) {
+                return [
+                    'id' => isset($unit['id']) ? (int) $unit['id'] : null,
+                    'weapon_number' => trim((string) ($unit['weapon_number'] ?? '')),
+                ];
+            })
+            ->filter(fn (array $unit) => $unit['weapon_number'] !== '')
+            ->values();
+
+        $keepIds = [];
+
+        foreach ($units as $unitData) {
+            $unit = $product->units()->updateOrCreate(
+                ['id' => $unitData['id'] ?: null],
+                [
+                    'product_restock_entry_id' => $openingEntry->id,
+                    'weapon_number' => $unitData['weapon_number'],
+                    'status' => 'available',
+                    'unit_purchase_price' => (float) $product->purchase_price,
+                ]
+            );
+
+            $keepIds[] = $unit->id;
+        }
+
+        $product->units()
+            ->when(! empty($keepIds), fn ($query) => $query->whereNotIn('id', $keepIds))
+            ->when(empty($keepIds), fn ($query) => $query)
+            ->where('status', 'available')
+            ->delete();
+
+        $unitCount = $product->units()->count();
+
+        $product->updateQuietly([
+            'stock_quantity' => $unitCount,
+        ]);
+
+        $openingEntry->updateQuietly([
+            'quantity' => $unitCount,
+            'remaining_quantity' => $unitCount,
+            'unit_purchase_price' => (float) $product->purchase_price,
+        ]);
+
+        $product->units()->update([
+            'product_restock_entry_id' => $openingEntry->id,
+            'unit_purchase_price' => (float) $product->purchase_price,
         ]);
     }
 
@@ -543,6 +652,23 @@ class AdminProductController extends Controller
             ->filter()
             ->sort()
             ->first();
+    }
+
+    private function canEditOpeningInventory(Product $product): bool
+    {
+        $hasExtraRestock = $product->restockEntries()
+            ->where('is_opening', false)
+            ->exists();
+
+        if ($hasExtraRestock) {
+            return false;
+        }
+
+        return ! DB::table('sale_items')
+            ->join('sales', 'sales.id', '=', 'sale_items.sale_id')
+            ->where('sale_items.product_id', $product->id)
+            ->whereNull('sales.deleted_at')
+            ->exists();
     }
 
     private function productListSummary($products, ?string $fromDate = null, ?string $toDate = null): array

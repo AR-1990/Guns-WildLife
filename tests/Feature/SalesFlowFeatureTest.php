@@ -293,6 +293,117 @@ class SalesFlowFeatureTest extends TestCase
         $this->assertSame('950.00', $product->selling_price);
     }
 
+    public function test_admin_can_correct_opening_purchase_price_and_stock_before_any_restock_or_sale(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.store'), [
+                'name' => 'Opening Correction Product',
+                'category_id' => $this->category()->id,
+                'ownership_type' => 'company',
+                'unit' => 'Piece',
+                'purchase_price' => 300,
+                'selling_price' => 450,
+                'stock_quantity' => 2,
+                'min_stock_level' => 1,
+                'max_stock_level' => 8,
+                'status' => 'active',
+                'entry_date' => '2026-08-18',
+            ])
+            ->assertRedirect(route('admin.products.index'));
+
+        $product = Product::query()->where('name', 'Opening Correction Product')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put(route('admin.products.update', $product), [
+                'name' => 'Opening Correction Product',
+                'category_id' => $this->category()->id,
+                'ownership_type' => 'company',
+                'unit' => 'Piece',
+                'purchase_price' => 350,
+                'selling_price' => 450,
+                'stock_quantity' => 5,
+                'min_stock_level' => 1,
+                'max_stock_level' => 8,
+                'status' => 'active',
+                'entry_date' => '2026-08-18',
+            ])
+            ->assertRedirect(route('admin.products.index'));
+
+        $product->refresh();
+        $openingEntry = ProductRestockEntry::query()->where('product_id', $product->id)->firstOrFail();
+
+        $this->assertSame('350.00', $product->purchase_price);
+        $this->assertSame(5, $product->stock_quantity);
+        $this->assertSame(5, $openingEntry->quantity);
+        $this->assertSame(5, $openingEntry->remaining_quantity);
+        $this->assertSame('350.00', $openingEntry->unit_purchase_price);
+    }
+
+    public function test_admin_cannot_correct_opening_purchase_price_and_stock_after_restock(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.store'), [
+                'name' => 'Locked Correction Product',
+                'category_id' => $this->category()->id,
+                'ownership_type' => 'company',
+                'unit' => 'Piece',
+                'purchase_price' => 300,
+                'selling_price' => 450,
+                'stock_quantity' => 2,
+                'min_stock_level' => 1,
+                'max_stock_level' => 8,
+                'status' => 'active',
+                'entry_date' => '2026-08-18',
+            ])
+            ->assertRedirect(route('admin.products.index'));
+
+        $product = Product::query()->where('name', 'Locked Correction Product')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.restock.store', $product), [
+                'restocked_at' => '2026-08-20',
+                'purchase_price' => 500,
+                'quantity' => 3,
+            ])
+            ->assertRedirect(route('admin.products.restock.create', $product));
+
+        $this->actingAs($admin)
+            ->put(route('admin.products.update', $product), [
+                'name' => 'Locked Correction Product',
+                'category_id' => $this->category()->id,
+                'ownership_type' => 'company',
+                'unit' => 'Piece',
+                'purchase_price' => 999,
+                'selling_price' => 450,
+                'stock_quantity' => 99,
+                'min_stock_level' => 1,
+                'max_stock_level' => 8,
+                'status' => 'active',
+                'entry_date' => '2026-08-18',
+            ])
+            ->assertRedirect(route('admin.products.index'));
+
+        $product->refresh();
+        $openingEntry = ProductRestockEntry::query()
+            ->where('product_id', $product->id)
+            ->where('is_opening', true)
+            ->firstOrFail();
+
+        $this->assertSame('500.00', $product->purchase_price);
+        $this->assertSame(5, $product->stock_quantity);
+        $this->assertSame(2, $openingEntry->quantity);
+        $this->assertSame(2, $openingEntry->remaining_quantity);
+        $this->assertSame('300.00', $openingEntry->unit_purchase_price);
+    }
+
     public function test_products_index_shows_summary_cards_and_edit_screen_does_not(): void
     {
         $admin = User::factory()->create([
@@ -330,9 +441,9 @@ class SalesFlowFeatureTest extends TestCase
                 'stats_to_date' => '2026-09-12',
             ]))
             ->assertOk()
-            ->assertSeeText('Total Stock')
-            ->assertSeeText('Total Stock Value')
-            ->assertSeeText('Total Sell')
+            ->assertSeeText('Current Stock')
+            ->assertSeeText('Current Stock Value')
+            ->assertSeeText('Current Total Sell')
             ->assertSeeText('Date Range Stock')
             ->assertSeeText('Date Range Stock Value')
             ->assertSeeText('Date Range Total Sell');
@@ -342,6 +453,68 @@ class SalesFlowFeatureTest extends TestCase
             ->assertOk()
             ->assertDontSeeText('Product Summary')
             ->assertDontSeeText('Date Range Summary');
+    }
+
+    public function test_admin_dashboard_shows_remaining_and_received_stock_metrics(): void
+    {
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMIN,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.store'), [
+                'name' => 'Dashboard Stock Summary Product',
+                'category_id' => $this->category()->id,
+                'ownership_type' => 'company',
+                'unit' => 'Piece',
+                'purchase_price' => 100,
+                'selling_price' => 150,
+                'stock_quantity' => 3,
+                'min_stock_level' => 1,
+                'max_stock_level' => 10,
+                'status' => 'active',
+                'entry_date' => '2026-09-01',
+            ])
+            ->assertRedirect(route('admin.products.index'));
+
+        $product = Product::query()->where('name', 'Dashboard Stock Summary Product')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.restock.store', $product), [
+                'restocked_at' => '2026-09-05',
+                'purchase_price' => 200,
+                'quantity' => 2,
+            ])
+            ->assertRedirect(route('admin.products.restock.create', $product));
+
+        $this->actingAs($admin)
+            ->post(route('admin.sales.store'), [
+                'document_type' => 'sales_invoice',
+                'customer_name' => 'Dashboard Buyer',
+                'sale_date' => '2026-09-07',
+                'items' => [
+                    [
+                        'product_id' => $product->id,
+                        'quantity' => 1,
+                        'price' => 150,
+                    ],
+                ],
+                'discount_percent' => 0,
+                'action_type' => 'completed',
+            ])
+            ->assertRedirect(route('admin.sales.index'));
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSeeText('Remaining Stock')
+            ->assertSeeText('Remaining Stock Price')
+            ->assertSeeText('Total Stock Received')
+            ->assertSeeText('Received Stock Price')
+            ->assertSeeText('4')
+            ->assertSeeText('Rs. 600.00')
+            ->assertSeeText('5')
+            ->assertSeeText('Rs. 700.00');
     }
 
     public function test_fifo_costing_keeps_old_and_new_stock_layers_separate(): void

@@ -192,7 +192,8 @@
                                     <th>Unit</th>
                                     <th>Stock</th>
                                     <th>Stock Alert</th>
-                                    <th>Price</th>
+                                    <th>Purchase Price</th>
+                                    <th>Sell Price</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -212,6 +213,7 @@
                                                 {{ $currentStock <= 0 ? 'Out of Stock' : ($currentStock <= $stockThreshold ? 'Low Stock' : 'In Stock') }}
                                             </span>
                                         </td>
+                                        <td>Rs. {{ number_format((float) $product->purchase_price, 2) }}</td>
                                         <td>Rs. {{ number_format((float) $product->selling_price, 2) }}</td>
                                         <td>
                                             <span class="badge {{ $product->status === 'active' ? 'active' : 'inActive' }}">
@@ -245,7 +247,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center">No products found.</td>
+                                        <td colspan="10" class="text-center">No products found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

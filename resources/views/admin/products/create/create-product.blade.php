@@ -6,6 +6,7 @@
 @section('content')
     @php($isEdit = $product->exists)
     @php($serializedChecked = old('is_serialized', $product->is_serialized))
+    @php($inventoryLocked = $isEdit && ! $canEditOpeningInventory)
 
     <div class="products-dashboard">
         <div class="dashboard-content__head">
@@ -88,9 +89,11 @@
                     <div class="col-md-4">
                         <label class="form-label">Purchase Amount <span class="text-danger">*</span></label>
                         <input type="number" name="purchase_price" id="purchaseAmountInput" class="form-control"
-                            value="{{ old('purchase_price', $product->purchase_price ?? '0.00') }}" step="0.01" min="0" required {{ $isEdit ? 'readonly' : '' }}>
-                        @if ($isEdit)
+                            value="{{ old('purchase_price', $product->purchase_price ?? '0.00') }}" step="0.01" min="0" required {{ $inventoryLocked ? 'readonly' : '' }}>
+                        @if ($inventoryLocked)
                             <small class="text-muted">Purchase amount ab restock screen se update hoga.</small>
+                        @elseif ($isEdit)
+                            <small class="text-muted">Jab tak restock ya sale nahi hui, yahan se opening purchase amount theek kar sakte hain.</small>
                         @endif
                     </div>
 
@@ -103,9 +106,9 @@
                     <div class="col-md-4">
                         <label class="form-label">Stock Quantity <span class="text-danger">*</span></label>
                         <input type="number" name="stock_quantity" id="stockQuantity" class="form-control"
-                            value="{{ old('stock_quantity', $product->stock_quantity ?? count($productUnits)) }}" min="0" required {{ $isEdit ? 'readonly' : '' }}>
+                            value="{{ old('stock_quantity', $product->stock_quantity ?? count($productUnits)) }}" min="0" required {{ $inventoryLocked ? 'readonly' : '' }}>
                         <small class="text-muted">
-                            {{ $isEdit ? 'Stock ab Restock button se manage hoga.' : 'Opening stock yahan set karein. Baad mein Restock button use hoga.' }}
+                            {{ $inventoryLocked ? 'Stock ab Restock button se manage hoga.' : ($isEdit ? 'Jab tak restock ya sale nahi hui, opening stock yahan se theek kar sakte hain.' : 'Opening stock yahan set karein. Baad mein Restock button use hoga.') }}
                         </small>
                     </div>
 
@@ -145,7 +148,7 @@
                                         <div class="col-md-10">
                                             <label class="form-label">Weapon Number {{ $index + 1 }}</label>
                                             <input type="text" name="weapon_units[{{ $index }}][weapon_number]" class="form-control"
-                                                value="{{ $unit['weapon_number'] ?? '' }}" placeholder="Weapon code" {{ $isEdit || ($unit['status'] ?? 'available') !== 'available' ? 'readonly' : '' }}>
+                                                value="{{ $unit['weapon_number'] ?? '' }}" placeholder="Weapon code" {{ $inventoryLocked || ($unit['status'] ?? 'available') !== 'available' ? 'readonly' : '' }}>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Status</label>
@@ -188,6 +191,7 @@
         const weaponUnitsWrap = document.getElementById('weaponUnitsWrap');
         const weaponUnitsContainer = document.getElementById('weaponUnitsContainer');
         const existingUnits = @json($productUnits);
+        const inventoryLocked = @json($inventoryLocked);
 
         if (!purchaseAmountInput || !serializedCheckbox || !stockQuantityInput || !weaponUnitsWrap || !weaponUnitsContainer) {
             return;
@@ -208,7 +212,7 @@
 
             for (let index = 0; index < total; index++) {
                 const unit = existingUnits[index] || {};
-                const readonly = unit.status && unit.status !== 'available' ? 'readonly' : '';
+                const readonly = inventoryLocked || (unit.status && unit.status !== 'available') ? 'readonly' : '';
 
                 html += `
                     <div class="row g-3 mb-2 weapon-unit-row">
